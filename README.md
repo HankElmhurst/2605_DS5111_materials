@@ -1,6 +1,6 @@
 # Online MSDS Syllabus Summer 2026
 
-## Course #: Software and Automation Skills
+## DS5111: Software and Automation Skills
 **Syllabus: Summer 2026**
 
 ---
