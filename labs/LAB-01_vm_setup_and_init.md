@@ -9,7 +9,7 @@ You will use your virginia email and password just as you do with all other UVA 
 * Top left menu bar, make sure you are in the `virginia` data center
 * Go to `EC2`
 * From there, follow video instructions to set up your VM
-* PLEASE stick to the naming convention <first_name>_<UVAID>. for example efrain_dpy8wq.  For security reasons, if I see a VM that doesn't match I will remove it.
+* PLEASE stick to the naming convention `<first_name>_<UVAID>`, for example efrain_dpy8wq.  For security reasons, if I see a VM that doesn't match I will remove it.
 
 ---
 
