@@ -12,6 +12,10 @@ You will use your virginia email and password just as you do with all other UVA 
 * PLEASE stick to the naming convention `<first_name>_<UVAID>`, for example efrain_dpy8wq.  For security reasons, if I see a VM that doesn't match I will remove it.
 
 ---
+## UPDATE May 23 2006
+* Use the `Ubuntu Server 26.04` selection (the latest)
+* And in your script make sure to use ``sudo apt install python3.14-venv -y` (was python3.12-venv, we're now moving to python 3.14)
+
 
 # Automating init of VM and setup of virtual environment
 Learning goals:
@@ -29,7 +33,7 @@ to recreate/clone a VM quickly.  Review and or execute the manual steps, then cr
 * These are the manual steps:
     - `sudo apt update`                      # To bring VM snapshot up to date with package versions
     - `sudo apt install make -y`             # so we can use makefiles
-    - `sudo apt install python3.12-venv -y`  # so we can create python virtual environments
+    - `sudo apt install python3.14-venv -y`  # so we can create python virtual environments
     - `sudo apt install tree`                # a usefull tool for listing files in tree form
 * Create a script to execute the manual steps above.  Name it `init.sh`.
 * Make it executable with `chmod +x init.sh`
