@@ -48,7 +48,7 @@ For this section, we'll create a script with this content in it:
 
 init_git_creds.sh
 ```bash
-!#/usr/bin/bash
+#!/usr/bin/bash
 
 USER=<your github email>
 NAME=<your github user name>
