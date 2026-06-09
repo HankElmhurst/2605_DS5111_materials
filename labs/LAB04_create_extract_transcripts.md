@@ -8,6 +8,7 @@ In this lab, you will complete a script for retrieving raw YouTube transcripts s
 ---
 
 ## Notable Sections to Fill Out
+The template for the script is here: [extract_transcripts_template.py](https://github.com/EfrainOlivaresUVA/2605_DS5111_materials/blob/main/scripts/extract_transcripts_template.py)
 
 ### Using dotenv
 Why use python-dotenv instead of hardcoding secrets or manually exporting them in your terminal shell? 
