@@ -216,3 +216,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+## MAC
+**/*.DS_Store
+
+## local
+slides/2508
+
