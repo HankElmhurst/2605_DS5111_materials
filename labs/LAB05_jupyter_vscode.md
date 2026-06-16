@@ -88,4 +88,35 @@ Thus, when we launch jupyter remotely, we'll be able to access locally
 
 If all went well, you should see a jupyter lab interface
 
+## Part 2: Attaching Visual Studio Code via Remote-SSH
 
+While running Jupyter and terminal scripts via raw SSH works well, modern development environments allow you to attach your local Visual Studio Code (VS Code) installation directly to your running cloud container. This gives you a full visual directory tree, localized debugging, and native support for extensions (like Claude Code) running directly inside your EC2 environment.
+
+### Prerequisites
+Before starting, ensure you have:
+1. **Visual Studio Code** installed on your local laptop.
+2. The **Public IP Address** of your running EC2 instance.
+
+---
+
+### Step 1: Install the Remote - SSH Extension
+1. Open **VS Code** on your local machine.
+2. Navigate to the **Extensions view** on the left sidebar (or press `Ctrl+Shift+X` on Windows/Linux, `Cmd+Shift+X` on Mac).
+3. Search for **"Remote - SSH"** (published by *Microsoft*).
+4. Click **Install**. 
+
+Once installed, a small green or blue **Remote Indicator button** (resembling a nested terminal bracket `><`) will appear at the very bottom-left corner of your VS Code window status bar.
+
+---
+
+### Step 2: Open the Remote Connection
+1. Click the **Remote Indicator button** (`><`) at the bottom-left corner of the VS Code status bar, or reopen the Command Palette and type **"Remote-SSH: Connect to Host..."**.
+2. Select your newly configured host target: `my5111`.
+3. A brand-new, isolated VS Code terminal window will initialize.
+4. If prompted to verify the fingerprint authenticity of the host machine, click **Continue**.
+5. Once initialized, the Remote Indicator badge in the status bar will display `SSH: uva-data-pipeline`.
+
+### Step 5: Verify Your Environment
+1. In your new window, go to the top menu and select **Terminal ➔ New Terminal**.
+2. Look at your command prompt—it should display `ubuntu@ip-xxx-xx-xx-xx` or similar, proving you are running commands straight inside your remote cloud sandbox!
+3. Go to **File ➔ Open Folder** on the VS Code menu. It will open a navigation modal *inside* your EC2 file space. Select your repository workspace directory and click **OK**.
