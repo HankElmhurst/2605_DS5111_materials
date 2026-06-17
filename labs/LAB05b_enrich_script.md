@@ -8,7 +8,7 @@ In this lab, you will complete an automated data transformation script that cons
 ---
 
 ## Part 1: Notable Sections to Fill Out
-The template script is located in your repository directory at: `bin/enrich_transcripts.py`. Your job is to fill out the four foundational `TODO` sections to restore structural integrity to our transcript transformation engine.
+The template script is located in this repo, [scripts/extract_transcripts_template.py](https://github.com/EfrainOlivaresUVA/2605_DS5111_materials/blob/main/scripts/extract_transcripts_template.py). Your job is to fill out the four foundational `TODO` sections to restore structural integrity to our transcript transformation engine.
 
 ### TODO 1: Environment Sanity and Client Initialization
 Why validate keys explicitly instead of letting the script crash naturally on an API call?
