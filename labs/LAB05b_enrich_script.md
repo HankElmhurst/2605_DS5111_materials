@@ -62,7 +62,7 @@ When this pipeline deploys to production via GitHub Actions, your continuous int
 
 To test your script's execution paths inside clean CI nodes, you must use **Monkey Patching** to mock the Gemini SDK. We will intercept `client.models.generate_content` mid-execution, bypass the web entirely, and force the method to instantly pass back a structured mock response object.
 
-Create a new file named `tests/test_enrich_transcripts.py` and implement an isolated test utilizing the skeletal model below:
+Create a new file named `tests/test_enrich_transcripts.py` and add this test so we validate your script runs via our github actions workflow:
 
 ```python
 import sys
@@ -82,7 +82,7 @@ def test_enrich_transcripts_streaming_pipeline(monkeypatch, capsys):
     and streams verified JSON objects out to stdout without making live API network requests.
     """
     # 2. Mock out the core GenAI Client methods
-    def mock_generate_content(model, contents, config):
+    def mock_generate_content(self, model, contents, config=None):
         # Return a pre-baked, schema-compliant JSON string mimicking the model output
         mock_data = {
             "video_id": "ds5111_v001",
@@ -92,8 +92,8 @@ def test_enrich_transcripts_streaming_pipeline(monkeypatch, capsys):
         }
         return MockGeminiResponse(json.dumps(mock_data))
 
-    # Intercept the target generation method on the models service layer
-    from google.genai.services import Models
+    # Corrected Module Target: Patch the actual Models service class inside the SDK
+    from google.genai.models import Models
     monkeypatch.setattr(Models, "generate_content", mock_generate_content)
 
     # 3. Simulate your stream input pipeline using an in-memory text buffer
@@ -104,7 +104,7 @@ def test_enrich_transcripts_streaming_pipeline(monkeypatch, capsys):
     # 4. Trigger the main pipeline script execution loop
     main()
 
-    # 5. Intercept the standard console console text buffers
+    # 5. Intercept the standard console text buffers
     captured = capsys.readouterr()
     stdout_lines = captured.out.strip().split("\n")
 
