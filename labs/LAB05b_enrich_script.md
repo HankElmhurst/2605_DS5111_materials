@@ -42,7 +42,7 @@ Executing `sys.stdout.flush()` immediately following your write command forces t
 
 ## Part 2: Automating the Test Framework
 
-To verify your work before writing your formal unit tests, we are using a real-world testing approach called **Consumer-Driven Contract Testing**. You have provided a validation tool at `bin/validate_schema.py` that reads processed lines and verifies if your output perfectly matches downstream type definitions.
+To verify your work before writing your formal unit tests, we are using a real-world testing approach called **Consumer-Driven Contract Testing**. You have provided a validation script here [scripts/validate_schema.py](https://github.com/EfrainOlivaresUVA/2605_DS5111_materials/blob/main/scripts/validate_schema.py) that reads processed lines and verifies if your output perfectly matches downstream type definitions.
 
 ### Step A: Update Your `Makefile`
 To build a seamless local developer loop, add a dedicated execution rule to your project `Makefile`. This allows you to verify code modifications instantly from the command line using short terminal commands.
