@@ -55,6 +55,13 @@ test_enrich:
 ```
 *(Note: The `-u` flag forces Python to run the script in unbuffered mode, complementing your internal system stream flushing logic.)*
 
+**NB:**  Create a `mock_transcript.jsonl` file with this content to complete the loop on the `test_enrich:` makefile job.
+```
+{"video_id": "ds5111_v001", "raw_text": "00:01 Welcome back to class! Today we are discussing Snowflake VARIANT columns and dbt staging transformations. Let's look at how to unpack semi-structured records. Make sure to refer to Martin Kleppmann's text, Designing Data-Intensive Applications. 00:45 Next, configure the staging view using a standard SELECT query statement."}
+{"video_id": "ds5111_v002", "raw_text": "00:10 In this module, we are automating custom stock execution blocks via the Alpaca API using AWS Lambda functions. 00:35 To understand the underlying cognitive workflows and feedback loops, I highly recommend reading the book Free Agents. 01:15 Let's push this code through our parallel GitHub Actions linter check."}
+```
+
+
 ---
 
 ### Step B: Write an Isolated Unit Test with Pytest
