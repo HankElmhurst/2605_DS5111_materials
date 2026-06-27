@@ -2,7 +2,7 @@
 
 ## Overview & Context
 
-For this lab, we are shifting our operating format to simulate a production development environment. Your Karolina and I will act as **Senior Code Reviewers**. You will submit your cleanup branch, and we will review issuing explicit code changes or approval requirements based strictly on the checklist below.
+For this lab, we are shifting our operating format to simulate a production development environment. Karolina and I will act as **Senior Code Reviewers**. You will submit your cleanup branch, and we will review issuing explicit code changes or approval requirements based strictly on the checklist below.
 
 ---
 
