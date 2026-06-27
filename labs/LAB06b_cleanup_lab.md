@@ -20,8 +20,6 @@ git remote set-url origin git@github.com:USERNAME/CORRECT-REPO-NAME.git
 
 ```
 
-EOMARKER
-
 #### 2. Enforce Strict `bin/` vs `lib/` Separation and Eliminate Chronological Folders
 
 * **Rationale:** Organizing directories by "Week 1", "Week 2", or "Lab 3" is an anti-pattern. Code environments must be organized by structural role, not by the date they were assigned. Real-world platforms run code from predictable pathways like execution binaries (`bin/`) and shared modules (`lib/`).
@@ -30,7 +28,6 @@ EOMARKER
 * Move any custom auxiliary modules, helper functions, or business-logic classes into `/lib`.
 * Completely delete historical chronological folders (e.g., `week1/`, `lab2/`). Use Git tags if you ever need to reference a specific historical milestone snapshot.
 * Verify that your code targets the new layout (e.g., `python bin/extract_transcripts_oop.py`).
-
 
 
 #### 3. Eradicate Tracked Runtime Pollution (`__pycache__`, `*.pyc`, `*.log`)
@@ -43,31 +40,23 @@ git rm -r --cached $(find . -name "__pycache__" -o -name "*.pyc" -o -name "*.log
 
 ```
 
-
 * Commit this change immediately to clear your staging history.
 
+#### 4. Check standards into the repo (`.gitignore`, `pylintrc`, `pytest.ini`)
 
-
-#### 4. Establish Global Inclusions (`.gitignore`, `.pylintrc`, `pytest.ini`)
-
-* **Rationale:** Tool configuration must be explicitly declared within the repository root so that every developer and automation engine evaluates code behavior under the exact same parameters. Without these files, local configuration drifting occurs.
-* **How to Fix:**
-* Verify that your root directory explicitly contains three dotfiles: `.gitignore`, `.pylintrc`, and `pytest.ini`.
-* Open your `.gitignore` and ensure the following rules are explicitly appended to prevent local files from ever being restaged:
-```text
-__pycache__/
-*.pyc
-*.log
+* **Rationale:** Writing configuration files from scratch leads to human error and omission. Global engineering teams rely on verified, community-maintained boilerplates to capture subtle architecture edge cases. For instance, the official GitHub Python template automatically covers platform-specific metadata (`.DS_Store`), IDE settings (`.vscode/`), testing tracking caches (`.pytest_cache/`), and data science footprints (`.ipynb_checkpoints/`) that you would otherwise have to discover through painful experience.
+* **How to Fix:**  We already covered how to generate or create the pylintrc and pytest.ini.  For the gitignore, there is much better way to go than creating one from scratch:
+* 
+1. Open your terminal, navigate to your repository root, and use `curl` to fetch the gold-standard Python template straight from GitHub's upstream engine:
+`bash curl -sSL https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore -o .gitignore `
+2. Open your newly created `.gitignore` in Vim or your local text editor, scroll to the absolute bottom of the file, and append your pipeline's localized additions to a custom block. For example:
+```
 .venv/
-.pytest_cache/
-
+**/*.log
 ```
 
-
-
-
-
 ---
+
 
 ### Section B: The Local Automation Layer (Makefile)
 
@@ -78,17 +67,13 @@ __pycache__/
 * Do not rely on the user having run `source .venv/bin/activate` in their active terminal shell.
 * Explicitly route your Makefile target commands directly through your local virtual environment folder variable path:
 ```makefile
-VENV = .venv
+ENV = env
 PYTHON = $(VENV)/bin/python3
-PIP = $(VENV)/bin/pip
+PIP = $(ENV)/bin/pip
 
 test:
 	$(PYTHON) -m pytest tests/
-
 ```
-
-
-
 
 
 #### 6. Transition Linter Execution Targets from Single Files to Full Folders
@@ -101,8 +86,6 @@ lint:
 	$(PYTHON) -m pylint bin/ lib/ tests/
 
 ```
-
-
 
 
 
@@ -177,6 +160,70 @@ strategy:
 * Deconstruct your singular GitHub Actions job sequence into distinct, isolated named jobs inside your YAML layout: `lint` and `test`.
 * Ensure they do not have a sequential `needs:` lock on each other if they do not share operational artifacts, allowing the runner instances to spin up concurrently.
 
+Use this example to parallelize your lint and test jobs in your ci.yml
+```yaml
+name: Continuous Integration Quality Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  # JOB 1: Code Style & Syntax Auditing running in parallel
+  lint:
+    name: Code Quality Inspection (Linter)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Runtime Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      # Pass control directly to the local Makefile interface contract
+      - name: Execute Linter Quality Gate
+        run: make lint
+
+  # JOB 2: Functional Test Executions running in parallel
+  test:
+    name: Unit Testing Engine (Pytest)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Runtime Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      # Pass control directly to the local Makefile interface contract
+      - name: Execute Automated Test Suite
+        run: make test
+```
+
 
 
 #### 12. Enforce absolute Continuous Integration Integrity (No Hidden Comments)
@@ -185,6 +232,8 @@ strategy:
 * **How to Fix:**
 * Verify that no steps inside your active structural workflow `.yml` definitions are commented out or configured with parameters like `continue-on-error: true`.
 * The GitHub Actions summary page must explicitly evaluate and display green across all active jobs using unmanipulated exit states.
+
+**NB:** This point specifically addresses a lot of commented out steps in some ci.yml files I've seen.  If yours has no commented steps you're good.
 
 
 
