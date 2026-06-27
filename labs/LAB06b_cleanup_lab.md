@@ -2,9 +2,7 @@
 
 ## Overview & Context
 
-Welcome to your mid-semester engineering audit. In a professional data science or data engineering role, writing code that runs on your local laptop is only 20% of the battle. The remaining 80% involves ensuring that your infrastructure is deterministic, your automation scripts are bulletproof, your codebase is clear of environment pollution, and your team can safely clone, test, and deploy your pipeline without out-of-band debugging.
-
-For this lab, we are shifting our operating format to simulate a production development environment. Your teaching assistant (TA) will act as a **Senior Code Reviewer**. You will submit your cleanup branch, and they will conduct an asynchronous Pull Request (PR) review, issuing explicit code changes or approval requirements based strictly on the checklist below.
+For this lab, we are shifting our operating format to simulate a production development environment. Your Karolina and I will act as **Senior Code Reviewers**. You will submit your cleanup branch, and we will review issuing explicit code changes or approval requirements based strictly on the checklist below.
 
 ---
 
@@ -14,21 +12,19 @@ For this lab, we are shifting our operating format to simulate a production deve
 
 #### 1. Adhere to the Requested Standard Repository Naming Schema
 
-* **Intuition:** In corporate code ecosystems, discovery and automated internal tool indexing rely on naming conventions. Mismatched or erratic repository names break automated dependency tracking and project cataloging.
-* **How to Fix:** * Check your repository name on GitHub. Ensure it exactly matches the format designated in your course registration guidelines (e.g., `ds5111-pipeline-<your_computing_id>`).
+* **Rationale:** In corporate code ecosystems, discovery and **automated** internal tool indexing rely on naming conventions. Mismatched or erratic repository names break automated dependency tracking and project cataloging.
+* **How to Fix:** * Check your repository name on GitHub. Ensure it exactly matches the format designated in your course registration guidelines (e.g., `2605_DS5111_<your_computing_id>`).
 * If it is incorrect, navigate to **Settings** -> **Repository Name**, rename it, and update your local git remote tracking using:
 ```bash
 git remote set-url origin git@github.com:USERNAME/CORRECT-REPO-NAME.git
 
 ```
 
-
-
-
+EOMARKER
 
 #### 2. Enforce Strict `bin/` vs `lib/` Separation and Eliminate Chronological Folders
 
-* **Intuition:** Organizing directories by "Week 1", "Week 2", or "Lab 3" is an anti-pattern. Code environments must be organized by structural role, not by the date they were assigned. Real-world platforms run code from predictable pathways like execution binaries (`bin/`) and shared modules (`lib/`).
+* **Rationale:** Organizing directories by "Week 1", "Week 2", or "Lab 3" is an anti-pattern. Code environments must be organized by structural role, not by the date they were assigned. Real-world platforms run code from predictable pathways like execution binaries (`bin/`) and shared modules (`lib/`).
 * **How to Fix:**
 * Move your latest executable scripts (e.g., extraction, enrichment, and analytical runners) directly into the `/bin` directory.
 * Move any custom auxiliary modules, helper functions, or business-logic classes into `/lib`.
@@ -39,7 +35,7 @@ git remote set-url origin git@github.com:USERNAME/CORRECT-REPO-NAME.git
 
 #### 3. Eradicate Tracked Runtime Pollution (`__pycache__`, `*.pyc`, `*.log`)
 
-* **Intuition:** Bytecode binaries (`.pyc`), local logging run statements (`.log`), and python optimization folders (`__pycache__`) are localized runtime artifacts. Committing them into source control pollutes code diffs, causes merge conflicts, and threatens system security if sensitive API payloads bleed into local text log files.
+* **Rationale:** Bytecode binaries (`.pyc`), local logging run statements (`.log`), and python optimization folders (`__pycache__`) are localized runtime artifacts. Committing them into source control pollutes code diffs, causes merge conflicts, and threatens system security if sensitive API payloads bleed into local text log files.
 * **How to Fix:**
 * Purge the files out of your Git tracking index without deleting them from your disk by executing:
 ```bash
@@ -54,7 +50,7 @@ git rm -r --cached $(find . -name "__pycache__" -o -name "*.pyc" -o -name "*.log
 
 #### 4. Establish Global Inclusions (`.gitignore`, `.pylintrc`, `pytest.ini`)
 
-* **Intuition:** Tool configuration must be explicitly declared within the repository root so that every developer and automation engine evaluates code behavior under the exact same parameters. Without these files, local configuration drifting occurs.
+* **Rationale:** Tool configuration must be explicitly declared within the repository root so that every developer and automation engine evaluates code behavior under the exact same parameters. Without these files, local configuration drifting occurs.
 * **How to Fix:**
 * Verify that your root directory explicitly contains three dotfiles: `.gitignore`, `.pylintrc`, and `pytest.ini`.
 * Open your `.gitignore` and ensure the following rules are explicitly appended to prevent local files from ever being restaged:
@@ -77,7 +73,7 @@ __pycache__/
 
 #### 5. Explicitly Activate Virtual Environments Inside the Makefile
 
-* **Intuition:** Calling global system bin variables like `python3` or `pip` directly inside a Makefile is highly unstable. It risks running instructions against the host operating system's global environment instead of your localized sandboxed virtual environment.
+* **Rationale:** Calling global system bin variables like `python3` or `pip` directly inside a Makefile is highly unstable. It risks running instructions against the host operating system's global environment instead of your localized sandboxed virtual environment.
 * **How to Fix:**
 * Do not rely on the user having run `source .venv/bin/activate` in their active terminal shell.
 * Explicitly route your Makefile target commands directly through your local virtual environment folder variable path:
@@ -97,7 +93,7 @@ test:
 
 #### 6. Transition Linter Execution Targets from Single Files to Full Folders
 
-* **Intuition:** Linting an isolated file leaves gaps in your quality gate. If a developer introduces an unvetted script into a subdirectory, a file-specific linter target will miss it entirely. We lint structural boundaries, not specific individual scripts.
+* **Rationale:** Linting an isolated file leaves gaps in your quality gate. If a developer introduces an unvetted script into a subdirectory, a file-specific linter target will miss it entirely. We lint structural boundaries, not specific individual scripts.
 * **How to Fix:**
 * Modify your `make lint` target instruction inside your `Makefile` to scan whole directory targets rather than hardcoded file links:
 ```makefile
@@ -112,7 +108,7 @@ lint:
 
 #### 7. Implement a Zero-Silencing Policy for Quality Gates
 
-* **Intuition:** Appending tricks like `|| true`, `|| exit 0`, or prefixing Makefile instructions with `-` simply to trick a build into showing a green checkmark is a catastrophic practice. It masks active structural code failures, breaking pipeline tracing and code reliability.
+* **Rationale:** Appending tricks like `|| true`, `|| exit 0`, or prefixing Makefile instructions with `-` simply to trick a build into showing a green checkmark is a catastrophic practice. It masks active structural code failures, breaking pipeline tracing and code reliability.
 * **How to Fix:**
 * Audit your `Makefile`. Remove any command manipulation strings that intentionally catch or silence execution return exit codes.
 * If a linter rule fails on a structural component that you purposefully designed, cleanly configure that exclusion inside your root `.pylintrc` file, or explicitly use inline python annotations (`# pylint: disable=broad-except`), rather than blind-spot silencing at the shell execution layer.
@@ -121,7 +117,7 @@ lint:
 
 #### 8. Standardize Your Project's Target Management Contract
 
-* **Intuition:** Every production data platform repository must expose an identical interface for onboarding developers. A new engineer should be able to clone any repository across an enterprise and interact with it using a predictable set of commands.
+* **Rationale:** Every production data platform repository must expose an identical interface for onboarding developers. A new engineer should be able to clone any repository across an enterprise and interact with it using a predictable set of commands.
 * **How to Fix:**
 * Ensure your `Makefile` exposes at least the following targets:
 * `make env` — Bootstraps the local virtual directory environment layout.
@@ -140,7 +136,7 @@ lint:
 
 #### 9. Delegate All CI/CD Workflow Workloads Direct to the Makefile
 
-* **Intuition:** Hardcoding multi-line shell command sequences directly inside a GitHub Actions configuration YAML creates an automation silo. If a test routine changes, you must modify it across multiple configuration screens. By delegating all execution steps directly to your `Makefile`, your local manual commands match your automated environment identically.
+* **Rationale:** Hardcoding multi-line shell command sequences directly inside a GitHub Actions configuration YAML creates an automation silo. If a test routine changes, you must modify it across multiple configuration screens. By delegating all execution steps directly to your `Makefile`, your local manual commands match your automated environment identically.
 * **How to Fix:**
 * Open `.github/workflows/ci.yml`.
 * Refactor your execution steps to pass through your Makefile contract rather than directly invoking individual python scripts:
@@ -159,7 +155,7 @@ lint:
 
 #### 10. Configure Multi-Version Matrix Verification
 
-* **Intuition:** Enterprise data pipelines must maintain stability through upstream runtime migrations. Running checks against only a single specific local Python patch leaves your system exposed to runtime failures when cloud compute providers upgrade their default system images.
+* **Rationale:** Enterprise data pipelines must maintain stability through upstream runtime migrations. Running checks against only a single specific local Python patch leaves your system exposed to runtime failures when cloud compute providers upgrade their default system images.
 * **How to Fix:**
 * Update your `ci.yml` build structure to include a `matrix` definition testing across multiple Python versions (e.g., `3.11`, `3.12`, `3.13`):
 ```yaml
@@ -176,7 +172,7 @@ strategy:
 
 #### 11. Run Linting and Testing Quality Gates in Parallel Workflows
 
-* **Intuition:** In production software lifecycles, engineer compute hours are expensive. Forcing a developer to wait for a 10-minute integration test suite to run before finding out they missed a trailing whitespace lint error slows down velocity. Linting checking and unit execution models are decoupled jobs that should execute in parallel.
+* **Rationale:** In production software lifecycles, engineer compute hours are expensive. Forcing a developer to wait for a 10-minute integration test suite to run before finding out they missed a trailing whitespace lint error slows down velocity. Linting checking and unit execution models are decoupled jobs that should execute in parallel.
 * **How to Fix:**
 * Deconstruct your singular GitHub Actions job sequence into distinct, isolated named jobs inside your YAML layout: `lint` and `test`.
 * Ensure they do not have a sequential `needs:` lock on each other if they do not share operational artifacts, allowing the runner instances to spin up concurrently.
@@ -185,7 +181,7 @@ strategy:
 
 #### 12. Enforce absolute Continuous Integration Integrity (No Hidden Comments)
 
-* **Intuition:** Commenting out flaky tests or linter checks inside your workflow YAML files to force a pull request to merge is a direct violation of continuous integration best practices. If a component is unstable under automation, it must be addressed via code architecture or formal testing flags, never masked in silence.
+* **Rationale:** Commenting out flaky tests or linter checks inside your workflow YAML files to force a pull request to merge is a direct violation of continuous integration best practices. If a component is unstable under automation, it must be addressed via code architecture or formal testing flags, never masked in silence.
 * **How to Fix:**
 * Verify that no steps inside your active structural workflow `.yml` definitions are commented out or configured with parameters like `continue-on-error: true`.
 * The GitHub Actions summary page must explicitly evaluate and display green across all active jobs using unmanipulated exit states.
@@ -198,7 +194,7 @@ strategy:
 
 #### 13. Maintain and Document a Comprehensive, Multi-Type Testing Suite
 
-* **Intuition:** Complex production data engines encounter various external edge cases, such as operating system differences, dependency version shifts, and unpredictable external infrastructure conditions. Your test layout must explicitly prove it can handle these variations using native testing decorators rather than manual intervention.
+* **Rationale:** Complex production data engines encounter various external edge cases, such as operating system differences, dependency version shifts, and unpredictable external infrastructure conditions. Your test layout must explicitly prove it can handle these variations using native testing decorators rather than manual intervention.
 * **How to Fix:**
 * Verify that your `tests/` directory contains all historical pipeline validations.
 * Ensure your test suite leverages the following advanced `pytest` features across your test scripts:
@@ -212,7 +208,7 @@ strategy:
 
 #### 14. Document Infrastructure Resilience Within Your README
 
-* **Intuition:** A project's `README.md` is an operational runbook, not just a casual introduction. A gold-standard documentation test is **The Disaster Recovery Standard**: *If an AWS EC2 compute instance is completely terminated right now, how long would it take a new engineer using only this documentation to reconstruct the entire stack from scratch and make it fully operational?*
+* **Rationale:** A project's `README.md` is an operational runbook, not just a casual introduction. A gold-standard documentation test is **The Disaster Recovery Standard**: *If an AWS EC2 compute instance is completely terminated right now, how long would it take a new engineer using only this documentation to reconstruct the entire stack from scratch and make it fully operational?*
 * **How to Fix:**
 * Audit your `README.md`. Ensure it cleanly clearly documents:
 1. **Project Core Objective:** A concise paragraph explaining exactly what data the pipeline processes and where it lands.
