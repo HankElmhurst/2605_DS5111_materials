@@ -273,22 +273,24 @@ jobs:
 
 ## Part 2: Evaluation Rubric
 
+## Part 2: Evaluation Rubric
+
 Every single clean repository element maps directly to 1 point. Your TA will evaluate your PR against this flat rubric.
 
 | Item | Evaluation Criterion | Target Component | Points |
 | --- | --- | --- | --- |
-| **1** | Repository explicitly conforms to standard course naming convention (`ds5111-pipeline-<id>`). | Repository Identity | 1 pt |
+| **1** | Repository explicitly conforms to standard course naming convention (`2605_DS5111_<id>`). | Repository Identity | 1 pt |
 | **2** | All chronological directories removed; codebase structured purely into `/bin` and `/lib`. | File System Structure | 1 pt |
 | **3** | Repository completely purged of tracked runtime pollution (`__pycache__`, `.pyc`, `.log`). | Index Hygiene | 1 pt |
 | **4** | Project root contains valid, functional instances of `.gitignore`, `.pylintrc`, and `pytest.ini`. | System Configuration | 1 pt |
-| **5** | Operational README contains structural project descriptions and clear onboarding setup guides. | Project Documentation | 1 pt |
-| **6** | Makefile abstracts and activates python virtual components explicitly via explicit environment variables. | Local Automation | 1 pt |
-| **7** | Linter rules target entire directory sweeps instead of individual isolated code files. | Local Automation | 1 pt |
-| **8** | Zero use of command-silencing mechanisms (` |  | true`, `-`) to bypass check errors. |
-| **9** | Complete lifecycle command contract exposed (`env`, `update`, `lint`, `test`, `run`). | Local Automation | 1 pt |
-| **10** | GitHub Action execution workflow delegates all major operational tasks directly to `make`. | Continuous Integration | 1 pt |
-| **11** | Workflow configuration executes matrix runs across multiple explicit versions of Python. | Continuous Integration | 1 pt |
-| **12** | Quality gates (`lint` and `test`) are split to run in parallel pipelines. | Continuous Integration | 1 pt |
-| **13** | CI workflow contains zero commented-out code steps or failure avoidance flags. | Continuous Integration | 1 pt |
-| **14** | Test suite incorporates diverse test types (`parametrize`, `skipif`, `xfail`). | Validation Rigor | 1 pt |
+| **5** | Makefile abstracts and activates Python virtual components explicitly via explicit environment variables. | Local Automation | 1 pt |
+| **6** | Linter rules target entire directory sweeps instead of individual isolated code files. | Local Automation | 1 pt |
+| **7** | Zero use of command-silencing mechanisms (like `\|\| true` or `-`) to bypass check errors. | Local Automation | 1 pt |
+| **8** | Complete lifecycle command contract exposed (`env`, `update`, `lint`, `test`, `run`). | Local Automation | 1 pt |
+| **9** | GitHub Action execution workflow delegates all major operational tasks directly to `make`. | Continuous Integration | 1 pt |
+| **10** | Workflow configuration executes matrix runs across multiple explicit versions of Python. | Continuous Integration | 1 pt |
+| **11** | Quality gates (`lint` and `test`) are split to run in parallel pipelines. | Continuous Integration | 1 pt |
+| **12** | CI workflow contains zero commented-out code steps or failure avoidance flags. | Continuous Integration | 1 pt |
+| **13** | Test suite incorporates diverse native test types (`parametrize`, `skipif`, `xfail`). | Validation Rigor | 1 pt |
+| **14** | Operational README contains structural project descriptions, environment tables, and setup runbooks. | Project Documentation | 1 pt |
 | **Total** | **Minimum Passing Baseline Target: 14 / 14 Points** |  | **14 pts** |
