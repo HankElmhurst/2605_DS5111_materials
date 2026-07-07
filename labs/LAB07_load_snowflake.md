@@ -16,8 +16,6 @@ In this lab, you will construct the final piece of your ingestion engine: `bin/l
 
 ## 2. Step 1: Environment & Credential Configuration
 
-
-
 Because Snowflake strictly enforces multi-factor authentication (MFA) for security compliance, headless automated scripts cannot log in using a raw password. To bypass this programmatic bottleneck safely, you will generate a short-lived token to handle the data engineering pipeline.
 
 ### Phase A: Access & Authentication Security Setup
@@ -25,7 +23,7 @@ Because Snowflake strictly enforces multi-factor authentication (MFA) for securi
 1. Open your web browser and navigate to https://app.snowflake.com/adilksi/fqa59308/#/homepage.
 2. Enter your unique credentials:
 * **Username:** Your complete University of Virginia ID in all CAPS (`<UVA_ID>`).
-* **Password:** Use the temporary administrative one-time credential code: `DS5111_CMM4YJ_2026!`.
+* **Password:** Use the temporary administrative one-time credential code: `ds5111_<UPPER CASE UVA ID>_2026!`.
 3. **Password Mandatory Update:** Upon clicking sign-in, the system will prompt you to replace the temporary password. Specify a highly secure, unique password.
 4. **Multi-Factor Authentication (MFA):** Follow the prompt instructions to link a mobile authenticator app (such as Google Authenticator or Duo) to satisfy the required corporate network governance access layer.
 
@@ -47,8 +45,8 @@ ALTER USER ADD PROGRAMMATIC ACCESS TOKEN lab7_pipeline_token
 # ------------------------------------------------------------------------------
 # ENVIRONMENT CONFIGURATION FOR LAB 7
 # ------------------------------------------------------------------------------
-SF_USER="<YOUR_UVA_EMAIL>"
-SF_PASSWORD="<YOUR_TEMPORARY_OR_UPDATED_PASSWORD>"
+SF_USER="<YOUR_UVA_ID>"
+SF_PASSWORD="<YOUR_GENERATED_TOKEN>"
 SF_SCHEMA="<YOUR UVA ID>"
 
 # See the Canvas Lab page for your credentials
@@ -59,12 +57,6 @@ SF_ROLE=""
 
 ```
 
-Load these variables into your active terminal session before proceeding:
-
-```bash
-source .env
-
-```
 ---
 
 ## 3. Step 2: Lay Down the Code Infrastructure
@@ -116,7 +108,7 @@ def main():
         # ctx = snowflake.connector.connect(...)
         # cs = ctx.cursor()
         pass
-        ### TODO 2 CODE END HERE
+        ### TODO 1 CODE END HERE
     except Exception as e:
         logging.critical(f"Snowflake Authorization Context Handshake Failed: {str(e)}")
         sys.exit(1)
@@ -333,10 +325,10 @@ Once inside the primary dashboard console, navigate to your individual database 
 3. Set your execution engine context using the context drop-downs at the top of the worksheet page, or execute the following text syntax lines directly in the worksheet area:
 ```sql
 -- Explicitly configure your interface role context
-USE ROLE INGESTION_ROLE;
+USE ROLE DS5111_STUDENT_ROLE;
 
 -- Target the centralized master data course vault
-USE DATABASE <DATABASE>;
+USE DATABASE DS5111_DB;
 
 -- Set your context to your individual student schema workspace (your UVA computing ID)
 USE SCHEMA <UVA_ID>;
