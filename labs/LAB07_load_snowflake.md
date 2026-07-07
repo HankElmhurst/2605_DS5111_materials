@@ -16,9 +16,11 @@ In this lab, you will construct the final piece of your ingestion engine: `bin/l
 
 ## 2. Step 1: Environment & Credential Configuration
 
+
+
 Because Snowflake strictly enforces multi-factor authentication (MFA) for security compliance, headless automated scripts cannot log in using a raw password. To bypass this programmatic bottleneck safely, you will generate a short-lived token to handle the data engineering pipeline.
 
-1. Log into the Snowflake Snowsight web interface using your UVA credentials and approve the Duo 2FA prompt on your phone.
+1. Log into the Snowflake Snowsight web interface using your UVA credentials and approve the Duo 2FA prompt on your phone.  **NB:** In order to get your token for the creds you have to skip to section **5. Step 4 Phase A** and log in to Snowflake.  Then return to this step and continue here. 
 2. Open a fresh **SQL Worksheet** in the UI.
 3. Generate a token for your pipeline by running the following command:
 ```sql
