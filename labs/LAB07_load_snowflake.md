@@ -20,17 +20,28 @@ In this lab, you will construct the final piece of your ingestion engine: `bin/l
 
 Because Snowflake strictly enforces multi-factor authentication (MFA) for security compliance, headless automated scripts cannot log in using a raw password. To bypass this programmatic bottleneck safely, you will generate a short-lived token to handle the data engineering pipeline.
 
-1. Log into the Snowflake Snowsight web interface using your UVA credentials and approve the Duo 2FA prompt on your phone.  **NB:** In order to get your token for the creds you have to skip to section **5. Step 4 Phase A** and log in to Snowflake.  Then return to this step and continue here. 
-2. Open a fresh **SQL Worksheet** in the UI.
-3. Generate a token for your pipeline by running the following command:
+### Phase A: Access & Authentication Security Setup
+
+1. Open your web browser and navigate to https://app.snowflake.com/adilksi/fqa59308/#/homepage.
+2. Enter your unique credentials:
+* **Username:** Your complete University of Virginia ID in all CAPS (`<UVA_ID>`).
+* **Password:** Use the temporary administrative one-time credential code: `DS5111_CMM4YJ_2026!`.
+3. **Password Mandatory Update:** Upon clicking sign-in, the system will prompt you to replace the temporary password. Specify a highly secure, unique password.
+4. **Multi-Factor Authentication (MFA):** Follow the prompt instructions to link a mobile authenticator app (such as Google Authenticator or Duo) to satisfy the required corporate network governance access layer.
+
+### Phase B: Retrieve token for programmatic access
+For security reasons you can't use your password in a script.  So we need to do this step to fill in SF_PASSWORD in the .env file.
+
+1. Open a fresh **SQL Worksheet** in the UI.
+2. Generate a token for your pipeline by running the following command:
 ```sql
 ALTER USER ADD PROGRAMMATIC ACCESS TOKEN lab7_pipeline_token 
   DAYS_TO_EXPIRY = 14;
 
 ```
-4. Snowflake will execute the command and display a long, unique token secret string **one time only**. Copy this token string immediately.
-5. You will use this token **instead of** your password in the `.env` file.
-6. Fill out the rest of your `.env` file using your UVA credentials and the credentials found in Canvas on the assignment page.
+3. Snowflake will execute the command and display a long, unique token secret string **one time only**. Copy this token string immediately.
+4. You will use this token **instead of** your password in the `.env` file.
+5. Fill out the rest of your `.env` file using your UVA credentials and the credentials found in Canvas on the assignment page.
 
 ```bash
 # ------------------------------------------------------------------------------
@@ -313,18 +324,7 @@ make load
 
 To confirm your data has successfully broken out of local text streams and landed safely in corporate analytical tables, you must inspect the data from inside the Snowflake cloud interface.
 
-### Phase A: Access & Authentication Security Setup
-
-1. Open your web browser and navigate to https://app.snowflake.com/adilksi/fqa59308/#/homepage.
-2. Enter your unique credentials:
-* **Username:** Your complete University of Virginia ID in all CAPS (`<UVA_ID>`).
-* **Password:** Use the temporary administrative one-time credential code: `DS5111_CMM4YJ_2026!`.
-
-
-3. **Password Mandatory Update:** Upon clicking sign-in, the system will prompt you to replace the temporary password. Specify a highly secure, unique password.
-4. **Multi-Factor Authentication (MFA):** Follow the prompt instructions to link a mobile authenticator app (such as Google Authenticator or Duo) to satisfy the required corporate network governance access layer.
-
-### Phase B: Navigating to Your Schema Workspace
+### Phase A: Navigating to Your Schema Workspace
 
 Once inside the primary dashboard console, navigate to your individual database environment:
 
@@ -345,7 +345,7 @@ USE SCHEMA <UVA_ID>;
 
 
 
-### Phase C: Run Audit Assertions
+### Phase B: Run Audit Assertions
 
 In your active SQL Worksheet window, execute these queries to inspect your tables and confirm the rows landed exactly as intended:
 
