@@ -313,10 +313,10 @@ To confirm your data has successfully broken out of local text streams and lande
 
 ### Phase A: Access & Authentication Security Setup
 
-1. Open your web browser and navigate to the custom URL provided by your professor: **`[PROFESSOR NOTE: Insert your Snowflake cluster web UI URL entry point link here]`**.
+1. Open your web browser and navigate to https://app.snowflake.com/adilksi/fqa59308/#/homepage.
 2. Enter your unique credentials:
-* **Username:** Your complete University of Virginia email address (`<UVA_EMAIL>`).
-* **Password:** Use the temporary administrative one-time credential code: `<THEPASSWORD>`.
+* **Username:** Your complete University of Virginia ID in all CAPS (`<UVA_ID>`).
+* **Password:** Use the temporary administrative one-time credential code: `DS5111_CMM4YJ_2026!`.
 
 
 3. **Password Mandatory Update:** Upon clicking sign-in, the system will prompt you to replace the temporary password. Specify a highly secure, unique password.
