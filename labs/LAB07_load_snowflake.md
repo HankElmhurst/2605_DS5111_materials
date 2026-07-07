@@ -2,11 +2,11 @@
 
 ## 1. Introduction & Architectural Intent
 
-Up to this point in the semester, your data pipeline has operated purely as a localized, decoupled stream of text files. You have written Python nodes to filter dirty ingestion IDs, extract transcripts, and enrich payloads using external intelligence. Our next step is to unlock analytics engineering, multi-user concurrency, and machine learning workflows by landing this data securely in a centralized cloud data warehouse.
->>>>>>>
+Up to this point in the semester, your data pipeline has operated purely as a localized, decoupled stream of text files. You have written Python nodes to filter dirty ingestion IDs, extract transcripts, and enrich payloads using external intelligence. However, in an enterprise production environment, leaving critical datasets as flat files sitting on a local virtual machine disk is an operational risk. To unlock analytics engineering, multi-user concurrency, and machine learning workflows, this data must be landed securely in a centralized cloud data warehouse.
+
 In this lab, you will construct the final piece of your ingestion engine: `bin/load_snowflake.py`. This script will act as a standard Unix consumer node, reading streaming JSON Lines directly from standard input (`sys.stdin`) and writing them efficiently into Snowflake.
 
-### Core Technical Concepts:
+### Core Technical Concepts You Will Master:
 
 1. **The Insecure Import Invariant:** You will learn how to structure database connection allocations safely, ensuring that network operations *never* occur implicitly during a module import lifecycle—a foundational rule for creating testable systems.
 2. **The `VARIANT` Primitive:** Unlike legacy relational databases that require explicit, pre-defined rigid columns for every key-value pair, modern warehouses use optimized binary columnar schemas for semi-structured data. You will ingest entire polymorphic JSON blobs into a single `VARIANT` column.
@@ -14,61 +14,147 @@ In this lab, you will construct the final piece of your ingestion engine: `bin/l
 
 ---
 
-## 2. Instructions & Execution Workflows
-
-### Task A: Establish Your Local Environment Credentials
+## 2. Step 1: Environment & Credential Configuration
 
 To prevent credential leaks, you must **never** hardcode passwords, usernames, or account identifiers into your git repository. Your script will retrieve these configurations from your execution shell runtime environments.
 
-Before running or testing your pipeline locally, you must create an untracked environment setup file or export these variables directly into your active terminal shell session.
-
-Add these to your `.env` (ensure it is listed in your `.gitignore`) or run these commands in your bash terminal:
+Create a file named `.env` in the root of your repository (and verify that `.env` is listed in your `.gitignore` so it is never pushed to GitHub). Populate it with the following configuration variables:
 
 ```bash
-export SF_USER="your_uva_username"
-export SF_PASSWORD="your_secure_password"
-export SF_ACCOUNT="your_snowflake_account_id"
+# ------------------------------------------------------------------------------
+# ENVIRONMENT CONFIGURATION FOR LAB 7
+# ------------------------------------------------------------------------------
+export SF_USER="<YOUR_UVA_EMAIL>"
+export SF_PASSWORD="<YOUR_TEMPORARY_OR_UPDATED_PASSWORD>"
+
+# [PROFESSOR NOTE: Fill in the specific cluster details below before publishing]
+export SF_ACCOUNT="example-account-id.region"
 export SF_WAREHOUSE="COMPUTE_WH"
-export SF_DATABASE="UVA_DATA_ENGINEERING"
-export SF_SCHEMA="RAW_INGESTION"
+export SF_DATABASE="<DATABASE>"
+export SF_SCHEMA="<YOUR_UVA_ID>"
 export SF_ROLE="INGESTION_ROLE"
 
 ```
 
-### Task B: Complete the Template Code
-
-Open your newly created file at `bin/load_snowflake.py`. You will find four critical code blocks stripped down into `# TODO` placeholders. Read the structural design instructions carefully inside each placeholder comment block and supply the missing production-grade Python code.
-
-### Task C: Standard Execution Validation (The Pipeline Pipe)
-
-Once your script is written and your environment variables are initialized, you can smoke test the end-to-end execution loop by streaming a mock or real JSON Lines data payload into it directly from your terminal workspace using standard Unix pipes:
+Load these variables into your active terminal session before proceeding:
 
 ```bash
-# Verify the script consumes stdin and safely processes each line
-cat data/enriched_transcripts.jsonl | python bin/load_snowflake.py
-
-```
-
-### Task D: Implement the Makefile Ingestion Job
-
-Open your project `Makefile`. Add a declarative target shortcut to allow developers to trigger data warehouse synchronization.
-
-```makefile
-# Append this target configuration to your existing project Makefile
-.PHONY: load
-load:
-	@echo "Initiating Cloud Data Warehouse Synchronizer Node..."
-	cat data/enriched_transcripts.jsonl | python bin/load_snowflake.py
+source .env
 
 ```
 
 ---
 
-## 3. The Test Suite (Offline Verification Framework)
+## 3. Step 2: Lay Down the Code Infrastructure
 
-To verify that your database load logic is structurally sound, resilient, and safe without slamming the live Snowflake network endpoints during every local test loop run, you will implement an offline unit testing file at `tests/test_load_snowflake.py`.
+Before writing any logic, create the necessary script and test files in your repository and copy the boilerplate code below into them.
 
-This test utilizes a mock cursor and connection harness to ensure that your extraction engine correctly translates incoming standard input lines into matching parameterized SQL queries.
+### Create the Target Script
+
+Create a new file at `bin/load_snowflake.py` and paste the following template containing the unfinished `TODO` blocks:
+
+```python
+# File location: bin/load_snowflake.py
+import sys
+import os
+import json
+import logging
+import snowflake.connector
+
+# Establish clean centralized diagnostic logging metrics output footprint
+logging.basicConfig(
+    filename='pipeline/logs/pipeline_audit.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+def main():
+    logging.info("Pipeline Step 3 (Snowflake Loader Node) initialized.")
+
+    # -------------------------------------------------------------------------
+    # TODO 1: Environment Handshake & Connection Isolation Engine
+    # Securely retrieve database context variables from the shell environment.
+    # If key credentials (USER/PASSWORD) are missing, log a critical alert and crash out.
+    # Open your connection context engine using the native connector framework.
+    # -------------------------------------------------------------------------
+    sf_user = os.getenv('SF_USER')
+    sf_password = os.getenv('SF_PASSWORD')
+    
+    if not sf_user or not sf_password:
+        logging.critical("Missing critical Snowflake runtime credential bindings. Ingestion aborted.")
+        sys.exit(1)
+        
+    try:
+        # TODO: Complete the connector engine initialization using safe environment extractions
+        # ctx = snowflake.connector.connect(...)
+        # cs = ctx.cursor()
+        pass  # Remove this placeholder line once implemented
+    except Exception as e:
+        logging.critical(f"Snowflake Authorization Context Handshake Failed: {str(e)}")
+        sys.exit(1)
+
+    # -------------------------------------------------------------------------
+    # TODO 2: Semi-Structured Polymorphic Schema Verification (DDL)
+    # Execute a DDL statement to guarantee the target landing table exists.
+    # The table configuration MUST feature an active 'VARIANT' type data column 
+    # to hold the raw unstructured polymorphic incoming document strings efficiently, 
+    # alongside a default transactional generation record ingestion timestamp.
+    # -------------------------------------------------------------------------
+    try:
+        # TODO: Execute a SQL string verifying your target table and VARIANT structures
+        # cs.execute(...)
+        pass  # Remove this placeholder line once implemented
+    except Exception as e:
+        logging.error(f"Failed to execute target structural validation DDL: {str(e)}")
+        cs.close()
+        ctx.close()
+        sys.exit(1)
+
+    # -------------------------------------------------------------------------
+    # TODO 3: Safe Streaming Consumer Insertion Invariant
+    # Process inputs infinitely line-by-line via sys.stdin streaming.
+    # For every line:
+    #   1. Clean trailing whitespace. Skip blank lines.
+    #   2. Run structural sanity checks by deserializing the string to a dict.
+    #   3. Build a parameterized injection-proof insertion template query.
+    #   4. Convert the dict back into a serialized string literal and pass it
+    #      safely inside a positional execution parameter tuple using PARSE_JSON(%s).
+    # -------------------------------------------------------------------------
+    for line in sys.stdin:
+        cleaned_line = line.strip()
+        if not cleaned_line:
+            continue
+            
+        try:
+            # Safely validate structural correctness before invoking remote storage
+            json_data = json.loads(cleaned_line)
+            
+            # TODO: Complete the secure parameterized injection-proof cursor execution call.
+            # Never combine data parameters using string formatting operators or f-strings.
+            # cs.execute(..., ...)
+            
+            logging.info(f"Loaded entry token item target: [{json_data.get('video_id', 'UNKNOWN')}] safely to warehouse.")
+        except Exception as e:
+            logging.error(f"Skipping corrupt pipeline payload stream element: {str(e)}")
+
+    # -------------------------------------------------------------------------
+    # TODO 4: Defensive Resource Reclamation Lifecycle
+    # Ensure that resource cursors and connection pools are definitively closed 
+    # out down to the operating system runtime container layout.
+    # -------------------------------------------------------------------------
+    # TODO: Perform connection reclamation lifecycle operations
+    # cs.close()
+    # ctx.close()
+    logging.info("Pipeline Step 3 finished execution cycles cleanly.")
+
+if __name__ == '__main__':
+    main()
+
+```
+
+### Create the Mock Test Suite
+
+Create a new file at `tests/test_load_snowflake.py` and paste this offline testing script. This file uses advanced test mocks to intercept network activity, allowing you to debug your code locally without hitting Snowflake servers:
 
 ```python
 # File location: tests/test_load_snowflake.py
@@ -107,8 +193,11 @@ def test_load_snowflake_pipeline_ingestion_loop(monkeypatch, capsys):
     monkeypatch.setattr(sys, "stdin", mock_input_stream)
     
     # 5. Execute target script processing execution block
-    main()
-    
+    try:
+        main()
+    except UnboundLocalError:
+        pytest.fail("Resource variables referenced before definition. Verify cursor initialization logic.")
+
     # 6. Structurally assert that the schema verification table statements occurred
     assert mock_cursor.execute.call_count >= 3, "The database cursor should trigger table generation plus one call per row entry."
     
@@ -135,133 +224,137 @@ def test_load_snowflake_pipeline_ingestion_loop(monkeypatch, capsys):
 
 ```
 
-To run your offline testing engine suite locally, execute:
+---
+
+## 4. Step 3: The Developer & Test Verification Loop
+
+To break the chicken-and-egg dilemma, use this iterative development cycle to build and test your script incrementally:
+
+### Phase A: Run the Initial Test (Verify Failure)
+
+Execute your test suite immediately in your terminal:
 
 ```bash
 pytest tests/test_load_snowflake.py
 
 ```
 
----
+*Why are we doing this?* The test will immediately fail because your `TODO` blocks are blank. Reading the failing test messages gives you direct hints on what logic is missing.
 
-## 4. The Template Script Structure
+### Phase B: Complete the Implementation
 
-```python
-# File location: bin/load_snowflake.py
-import sys
-import os
-import json
-import logging
-import snowflake.connector
+Work through `bin/load_snowflake.py` and implement the logic inside **TODO 1, TODO 2, TODO 3, and TODO 4**. As you fill out each section, run the test command again:
 
-# Establish clean centralized diagnostic logging metrics output footprint
-logging.basicConfig(
-    filename='pipeline/logs/pipeline_audit.log',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+```bash
+pytest tests/test_load_snowflake.py
 
-def main():
-    logging.info("Pipeline Step 3 (Snowflake Loader Node) initialized.")
+```
 
-    # -------------------------------------------------------------------------
-    # TODO 1: Environment Handshake & Connection Isolation Engine
-    # Securely retrieve database context variables from the shell environment.
-    # If key credentials (USER/PASSWORD) are missing, log a critical alert and crash out.
-    # Open your connection context engine using the native connector framework.
-    # -------------------------------------------------------------------------
-    sf_user = os.getenv('SF_USER')
-    sf_password = os.getenv('SF_PASSWORD')
-    
-    if not sf_user or not sf_password:
-        logging.critical("Missing critical Snowflake runtime credential bindings. Ingestion aborted.")
-        sys.exit(1)
-        
-    try:
-        # TODO: Complete the constructor assignment using safe environment extractions
-        ctx = snowflake.connector.connect(
-            user=sf_user,
-            password=sf_password,
-            account=os.getenv('SF_ACCOUNT'),
-            warehouse=os.getenv('SF_WAREHOUSE'),
-            database=os.getenv('SF_DATABASE'),
-            schema=os.getenv('SF_SCHEMA'),
-            role=os.getenv('SF_ROLE')
-        )
-        cs = ctx.cursor()
-    except Exception as e:
-        logging.critical(f"Snowflake Authorization Context Handshake Failed: {str(e)}")
-        sys.exit(1)
+Iterate on your code until the test suite outputs a passing result:
+`======= 1 passed in 0.15s =======`
 
-    # -------------------------------------------------------------------------
-    # TODO 2: Semi-Structured Polymorphic Schema Verification (DDL)
-    # Execute a DDL statement to guarantee the target landing table exists.
-    # The table configuration MUST feature an active 'VARIANT' type data column 
-    # to hold the raw unstructured polymorphic incoming document strings efficiently, 
-    # alongside a default transactional generation record ingestion timestamp.
-    # -------------------------------------------------------------------------
-    try:
-        # TODO: Execute a SQL string verifying your target table and VARIANT structures
-        cs.execute("""
-            CREATE TABLE IF NOT EXISTS RAW_TRANSCRIPTS (
-                json_payload VARIANT,
-                inserted_at TIMESTAMP_LTZ DEFAULT CURRENT_TIMESTAMP()
-            )
-        """)
-    except Exception as e:
-        logging.error(f"Failed to execute target structural validation DDL: {str(e)}")
-        cs.close()
-        ctx.close()
-        sys.exit(1)
+### Phase C: Live End-to-End Execution
 
-    # -------------------------------------------------------------------------
-    # TODO 3: Safe Streaming Consumer Insertion Invariant
-    # Process inputs infinitely line-by-line via sys.stdin streaming.
-    # For every line:
-    #   1. Clean trailing whitespace. Skip blank lines.
-    #   2. Run structural sanity checks by deserializing the string to a dict.
-    #   3. Build a parameterized injection-proof insertion template query.
-    #   4. Convert the dict back into a serialized string literal and pass it
-    #      safely inside a positional execution parameter tuple using PARSE_JSON(%s).
-    # -------------------------------------------------------------------------
-    for line in sys.stdin:
-        cleaned_line = line.strip()
-        if not cleaned_line:
-            continue
-            
-        try:
-            # Safely validate structural correctness before invoking remote storage
-            json_data = json.loads(cleaned_line)
-            
-            # TODO: Complete the secure parameterized injection-proof cursor execution call.
-            # Never combine data parameters using string formatting operators or f-strings.
-            cs.execute(
-                "INSERT INTO RAW_TRANSCRIPTS (json_payload) SELECT PARSE_JSON(%s)",
-                (json.dumps(json_data),)
-            )
-            
-            logging.info(f"Loaded entry token item target: [{json_data.get('video_id', 'UNKNOWN')}] safely to warehouse.")
-        except Exception as e:
-            logging.error(f"Skipping corrupt pipeline payload stream element: {str(e)}")
+Once your offline mock tests pass, your code is structurally verified. Now it is safe to test it against your live Snowflake warehouse instance using standard Unix pipes.
 
-    # -------------------------------------------------------------------------
-    # TODO 4: Defensive Resource Reclamation Lifecycle
-    # Ensure that resource cursors and connection pools are definitively closed 
-    # out down to the operating system runtime container layout.
-    # -------------------------------------------------------------------------
-    # TODO: Perform connection reclamation lifecycle operations
-    cs.close()
-    ctx.close()
-    logging.info("Pipeline Step 3 finished execution cycles cleanly.")
+Stream your enriched JSON Lines data file directly into your completed loader script:
 
-if __name__ == '__main__':
-    main()
+```bash
+cat data/enriched_transcripts.jsonl | python bin/load_snowflake.py
+
+```
+
+Check your terminal output and review `pipeline/logs/pipeline_audit.log` to ensure no errors were encountered during the cloud connection handshake.
+
+### Phase D: Automation Integration
+
+Open your project `Makefile` and append the following declarative shortcut target to cement this operational sequence into your environment:
+
+```makefile
+.PHONY: load
+load:
+	@echo "🚀 Initiating Cloud Data Warehouse Synchronizer Node..."
+	cat data/enriched_transcripts.jsonl | python bin/load_snowflake.py
+
+```
+
+Test your new shortcut workflow from the terminal:
+
+```bash
+make load
 
 ```
 
 ---
 
-## 5. Grading Criteria & Evaluation Rubric (10 Points Total)
+## 5. Step 4: Cloud Warehouse UI Verification
+
+To confirm your data has successfully broken out of local text streams and landed safely in corporate analytical tables, you must inspect the data from inside the Snowflake cloud interface.
+
+### Phase A: Access & Authentication Security Setup
+
+1. Open your web browser and navigate to the custom URL provided by your professor: **`[PROFESSOR NOTE: Insert your Snowflake cluster web UI URL entry point link here]`**.
+2. Enter your unique credentials:
+* **Username:** Your complete University of Virginia email address (`<UVA_EMAIL>`).
+* **Password:** Use the temporary administrative one-time credential code: `<THEPASSWORD>`.
+
+
+3. **Password Mandatory Update:** Upon clicking sign-in, the system will prompt you to replace the temporary password. Specify a highly secure, unique password.
+4. **Multi-Factor Authentication (MFA):** Follow the prompt instructions to link a mobile authenticator app (such as Google Authenticator or Duo) to satisfy the required corporate network governance access layer.
+
+### Phase B: Navigating to Your Schema Workspace
+
+Once inside the primary dashboard console, navigate to your individual database environment:
+
+1. Locate and click on the **Projects** menu icon on the left-hand navigation pane, then select **Worksheets**.
+2. Click the **+** button in the top-right corner to open a fresh **SQL Worksheet**.
+3. Set your execution engine context using the context drop-downs at the top of the worksheet page, or execute the following text syntax lines directly in the worksheet area:
+```sql
+-- Explicitly configure your interface role context
+USE ROLE INGESTION_ROLE;
+
+-- Target the centralized master data course vault
+USE DATABASE <DATABASE>;
+
+-- Set your context to your individual student schema workspace (your UVA computing ID)
+USE SCHEMA <UVA_ID>;
+
+```
+
+
+
+### Phase C: Run Audit Assertions
+
+In your active SQL Worksheet window, execute these queries to inspect your tables and confirm the rows landed exactly as intended:
+
+```sql
+-- 1. Confirm the structural landing table was automatically generated
+SHOW TABLES;
+
+-- 2. Check the total number of records successfully written to your warehouse space
+SELECT COUNT(*) AS total_ingested_records, MAX(inserted_at) AS last_sync_timestamp 
+FROM RAW_TRANSCRIPTS;
+
+-- 3. Query the variant payload column to ensure full JSON properties are retrievable
+SELECT json_payload, inserted_at 
+FROM RAW_TRANSCRIPTS 
+LIMIT 5;
+
+-- 4. Deep-dive preview: extract internal properties nested deep inside the VARIANT object
+SELECT 
+    json_payload:video_id::STRING AS extracted_id,
+    json_payload:source::STRING AS platform_source,
+    json_payload:raw_text::STRING AS payload_preview
+FROM RAW_TRANSCRIPTS
+LIMIT 5;
+
+```
+
+Highlight the query syntax blocks and press `Ctrl + Enter` (or `Cmd + Enter` on macOS) to execute. Verify that your row count matches the exact number of elements from your local `data/enriched_transcripts.jsonl` file.
+
+---
+
+## 6. Grading Criteria & Evaluation Rubric (10 Points Total)
 
 | Target Weight | Evaluation Criteria Milestone | Measurement Objective |
 | --- | --- | --- |
