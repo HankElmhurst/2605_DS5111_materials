@@ -24,15 +24,15 @@ Create a file named `.env` in the root of your repository (and verify that `.env
 # ------------------------------------------------------------------------------
 # ENVIRONMENT CONFIGURATION FOR LAB 7
 # ------------------------------------------------------------------------------
-export SF_USER="<YOUR_UVA_EMAIL>"
-export SF_PASSWORD="<YOUR_TEMPORARY_OR_UPDATED_PASSWORD>"
+SF_USER="<YOUR_UVA_EMAIL>"
+SF_PASSWORD="<YOUR_TEMPORARY_OR_UPDATED_PASSWORD>"
+SF_SCHEMA="<YOUR UVA ID>"
 
-# [PROFESSOR NOTE: Fill in the specific cluster details below before publishing]
-export SF_ACCOUNT="example-account-id.region"
-export SF_WAREHOUSE="COMPUTE_WH"
-export SF_DATABASE="<DATABASE>"
-export SF_SCHEMA="<YOUR_UVA_ID>"
-export SF_ROLE="INGESTION_ROLE"
+# See the Canvas Lab page for your credentials
+SF_ACCOUNT=""
+SF_WAREHOUSE=""
+SF_DATABASE=""
+SF_ROLE=""
 
 ```
 
@@ -273,7 +273,7 @@ Open your project `Makefile` and append the following declarative shortcut targe
 ```makefile
 .PHONY: load
 load:
-	@echo "🚀 Initiating Cloud Data Warehouse Synchronizer Node..."
+	@echo "Initiating Cloud Data Warehouse Synchronizer Node..."
 	cat data/enriched_transcripts.jsonl | python bin/load_snowflake.py
 
 ```
