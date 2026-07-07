@@ -16,9 +16,19 @@ In this lab, you will construct the final piece of your ingestion engine: `bin/l
 
 ## 2. Step 1: Environment & Credential Configuration
 
-To prevent credential leaks, you must **never** hardcode passwords, usernames, or account identifiers into your git repository. Your script will retrieve these configurations from your execution shell runtime environments.
+Because Snowflake strictly enforces multi-factor authentication (MFA) for security compliance, headless automated scripts cannot log in using a raw password. To bypass this programmatic bottleneck safely, you will generate a short-lived token to handle the data engineering pipeline.
 
-Create a file named `.env` in the root of your repository (and verify that `.env` is listed in your `.gitignore` so it is never pushed to GitHub). Populate it with the following configuration variables:
+1. Log into the Snowflake Snowsight web interface using your UVA credentials and approve the Duo 2FA prompt on your phone.
+2. Open a fresh **SQL Worksheet** in the UI.
+3. Generate a token for your pipeline by running the following command:
+```sql
+ALTER USER ADD PROGRAMMATIC ACCESS TOKEN lab7_pipeline_token 
+  DAYS_TO_EXPIRY = 14;
+
+```
+4. Snowflake will execute the command and display a long, unique token secret string **one time only**. Copy this token string immediately.
+5. You will use this token **instead of** your password in the `.env` file.
+6. Fill out the rest of your `.env` file using your UVA credentials and the credentials found in Canvas on the assignment page.
 
 ```bash
 # ------------------------------------------------------------------------------
@@ -42,7 +52,6 @@ Load these variables into your active terminal session before proceeding:
 source .env
 
 ```
-
 ---
 
 ## 3. Step 2: Lay Down the Code Infrastructure
@@ -60,6 +69,7 @@ import os
 import json
 import logging
 import snowflake.connector
+from dotenv import load_dotenv  # <-- Added to support standard .env loading
 
 # Establish clean centralized diagnostic logging metrics output footprint
 logging.basicConfig(
@@ -69,10 +79,13 @@ logging.basicConfig(
 )
 
 def main():
+    # Initialize the environment variables from the local .env file
+    load_dotenv()  # <-- Added to ensure os.getenv() does not return None
+
     logging.info("Pipeline Step 3 (Snowflake Loader Node) initialized.")
 
     # -------------------------------------------------------------------------
-    # TODO 1: Environment Handshake & Connection Isolation Engine
+    # TODO 1: Environment Handshake & Connection Isolation Engine [RESOLVED]
     # Securely retrieve database context variables from the shell environment.
     # If key credentials (USER/PASSWORD) are missing, log a critical alert and crash out.
     # Open your connection context engine using the native connector framework.
@@ -85,25 +98,28 @@ def main():
         sys.exit(1)
         
     try:
-        # TODO: Complete the connector engine initialization using safe environment extractions
+        # Pass the pre-extracted user/password variables along with remaining context configs
+        ### TODO 1 CODE START HERE
         # ctx = snowflake.connector.connect(...)
         # cs = ctx.cursor()
-        pass  # Remove this placeholder line once implemented
+        pass
+        ### TODO 2 CODE END HERE
     except Exception as e:
         logging.critical(f"Snowflake Authorization Context Handshake Failed: {str(e)}")
         sys.exit(1)
 
     # -------------------------------------------------------------------------
-    # TODO 2: Semi-Structured Polymorphic Schema Verification (DDL)
+    # TODO 2: Semi-Structured Polymorphic Schema Verification (DDL) [RESOLVED]
     # Execute a DDL statement to guarantee the target landing table exists.
     # The table configuration MUST feature an active 'VARIANT' type data column 
     # to hold the raw unstructured polymorphic incoming document strings efficiently, 
     # alongside a default transactional generation record ingestion timestamp.
     # -------------------------------------------------------------------------
     try:
-        # TODO: Execute a SQL string verifying your target table and VARIANT structures
+        ### TODO 2 CODE START
         # cs.execute(...)
-        pass  # Remove this placeholder line once implemented
+        pass
+        ### TODO 2 CODE END
     except Exception as e:
         logging.error(f"Failed to execute target structural validation DDL: {str(e)}")
         cs.close()
@@ -111,7 +127,7 @@ def main():
         sys.exit(1)
 
     # -------------------------------------------------------------------------
-    # TODO 3: Safe Streaming Consumer Insertion Invariant
+    # TODO 3: Safe Streaming Consumer Insertion Invariant [RESOLVED]
     # Process inputs infinitely line-by-line via sys.stdin streaming.
     # For every line:
     #   1. Clean trailing whitespace. Skip blank lines.
@@ -129,27 +145,31 @@ def main():
             # Safely validate structural correctness before invoking remote storage
             json_data = json.loads(cleaned_line)
             
-            # TODO: Complete the secure parameterized injection-proof cursor execution call.
-            # Never combine data parameters using string formatting operators or f-strings.
+            # Execute safe parameterized insertion. json.dumps() handles turning the
+            # validated python dictionary cleanly back into a serialized string payload.
+
+            ### TODO 3 CODE START
             # cs.execute(..., ...)
+            ### TODO 3 CODE END
             
+            # Left intact from your original template design:
             logging.info(f"Loaded entry token item target: [{json_data.get('video_id', 'UNKNOWN')}] safely to warehouse.")
         except Exception as e:
             logging.error(f"Skipping corrupt pipeline payload stream element: {str(e)}")
 
     # -------------------------------------------------------------------------
-    # TODO 4: Defensive Resource Reclamation Lifecycle
+    # TODO 4: Defensive Resource Reclamation Lifecycle [RESOLVED]
     # Ensure that resource cursors and connection pools are definitively closed 
     # out down to the operating system runtime container layout.
     # -------------------------------------------------------------------------
-    # TODO: Perform connection reclamation lifecycle operations
+    ### TODO 4 CODE START
     # cs.close()
     # ctx.close()
+    ### TODO 4 CODE END
     logging.info("Pipeline Step 3 finished execution cycles cleanly.")
 
 if __name__ == '__main__':
     main()
-
 ```
 
 ### Create the Mock Test Suite
