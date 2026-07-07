@@ -3,7 +3,7 @@
 ## 1. Introduction & Architectural Intent
 
 Up to this point in the semester, your data pipeline has operated purely as a localized, decoupled stream of text files. You have written Python nodes to filter dirty ingestion IDs, extract transcripts, and enrich payloads using external intelligence. Our next step is to unlock analytics engineering, multi-user concurrency, and machine learning workflows by landing this data securely in a centralized cloud data warehouse.
-
+>>>>>>>
 In this lab, you will construct the final piece of your ingestion engine: `bin/load_snowflake.py`. This script will act as a standard Unix consumer node, reading streaming JSON Lines directly from standard input (`sys.stdin`) and writing them efficiently into Snowflake.
 
 ### Core Technical Concepts:
