@@ -88,7 +88,7 @@ CMD ["sh", "-c", "python bin/clean_ids.py"]]
 ```
 
 **NB:** We used only the clean_ids.py to insure things were running.  For the full pipeline run we can use:
-```
+```dockerfile
 # Step 6: Define the default interactive streaming entrypoint target command
 CMD ["sh", "-c", "python bin/clean_ids.py | python bin/extract_transcripts_oop.py | python bin/load_snowflake.py"]
 ```
