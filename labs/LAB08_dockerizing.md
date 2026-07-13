@@ -60,7 +60,7 @@ To distribute container images across cloud data spaces, teams utilize a central
 
 A `Dockerfile` is a declarative manifest that tells the engine exactly how to assemble an environment layer-by-layer. 
 
-Navigate to the root directory of your project repository (`~/ds5111-pipeline/`) and initialize a new blueprint file:
+Navigate to the root directory of your project repository (`~/2605_DS5111_<uvaid>/`) and initialize a new blueprint file:
 ```bash
 nano Dockerfile
 ```
@@ -69,7 +69,7 @@ Paste the following configuration blocks directly into the file:
 
 ```dockerfile
 # Step 1: Initialize environment using an official light-weight base image
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 # Step 2: Establish the working environment directory inside the container
 WORKDIR /app
@@ -82,7 +82,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Step 5: Copy your functional codebase assets down into the image space
 COPY bin/ ./bin/
-COPY pipeline/ ./pipeline/
 
 # Step 6: Define the default interactive streaming entrypoint target command
 CMD ["python", "bin/load_snowflake.py"]
