@@ -84,7 +84,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY bin/ ./bin/
 
 # Step 6: Define the default interactive streaming entrypoint target command
-CMD ["python", "bin/load_snowflake.py"]
+CMD ["sh", "-c", "python bin/clean_ids.py"]]
+```
+
+**NB:** We used only the clean_ids.py to insure things were running.  For the full pipeline run we can use:
+```
+# Step 6: Define the default interactive streaming entrypoint target command
+CMD ["sh", "-c", "python bin/clean_ids.py | python bin/extract_transcripts_oop.py | python bin/load_snowflake.py"]
 ```
 
 ### ⚠️ Critical Security Rule: The Stateless Invariant
