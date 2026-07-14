@@ -102,6 +102,8 @@ Docker images are sent over the public internet to registries. If you include a 
 
 ## 5. Part 4: Compiling and Building the Image
 
+**NB:** For this and the next section, you may find it useful to create makefile jobs so you don't have to keep rerunning the full commands.
+
 With the manifest locked down, compile your codebase into a distinct, locally tracked image asset. Substitute the `<your_dockerhub_username>` placeholder token with your actual Docker Hub profile username string throughout these steps.
 
 1. Build the image layer matrix from your repository root context:
@@ -121,7 +123,14 @@ With the manifest locked down, compile your codebase into a distinct, locally tr
 
 Before running our full system or interacting with external cloud endpoints, we want to prove that our streaming logic functions correctly inside the isolated container space. We will leverage **Option A** (Linear Command-Line Pipes) coupled with a shell execution short-circuit to test our data enrichment up to, but excluding, the final Snowflake upload step.
 
-1. Stream your host machine data source file into the container, pass the host `.env` profile dynamically at runtime using the `--env-file` flag, and instruct Docker to override its default command to run *only* a subset of your pipeline using a `bash -c` subshell string:
+1. Smoke testing your docker image.  On your first pass you are only using the clean_ids.py script.  You should be able to run it now and see the test pass by allowing a valid id to pass through.  Here's an example from my machine.
+
+```bash
+cat data/youtube_ids.txt | docker run -i efrainolivares/ds5111-pipeline:latest
+Q72flbyc2yQ
+```
+
+2.  Once the manual smoke test passes, you can incrementatlly add more scripts until you test the full pipeline. Stream your host machine data source file into the container, pass the host `.env` profile dynamically at runtime using the `--env-file` flag, and instruct Docker to override its default command to run *only* a subset of your pipeline using a `bash -c` subshell string:
    ```bash
    cat data/youtube_ids.txt | docker run -i --env-file .env <your_dockerhub_username>/ds5111-pipeline:latest bash -c "python bin/clean_ids.py | python bin/extract_transcripts_oop.py"
    ```
