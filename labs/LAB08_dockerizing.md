@@ -82,12 +82,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Step 5: Copy your functional codebase assets down into the image space
 COPY bin/ ./bin/
+RUN mkdir -p logs/
 
 # Step 6: Define the default interactive streaming entrypoint target command
-CMD ["sh", "-c", "python bin/clean_ids.py"]]
+CMD ["sh", "-c", "python bin/clean_ids.py"]
 ```
 
-**NB:** We used only the clean_ids.py to insure things were running.  Go through the process with this and to a quick test in section 6, then rebuild with the full pipeline:
+**NB:** We used only the clean_ids.py to ensure things were running.  Go through the process with this and to a quick test in section 6, then rebuild with the full pipeline:
 ```dockerfile
 # Step 6: Define the default interactive streaming entrypoint target command
 CMD ["sh", "-c", "python bin/clean_ids.py | python bin/extract_transcripts_oop.py | python bin/load_snowflake.py"]
@@ -126,11 +127,11 @@ Before running our full system or interacting with external cloud endpoints, we 
 1. Smoke testing your docker image.  On your first pass you are only using the clean_ids.py script.  You should be able to run it now and see the test pass by allowing a valid id to pass through.  Here's an example from my machine.
 
 ```bash
-cat data/youtube_ids.txt | docker run -i efrainolivares/ds5111-pipeline:latest
+cat data/youtube_ids.txt | docker run -i <your_dockerhub_username>/ds5111-pipeline:latest
 Q72flbyc2yQ
 ```
 
-2.  Once the manual smoke test passes, you can incrementatlly add more scripts until you test the full pipeline. Stream your host machine data source file into the container, pass the host `.env` profile dynamically at runtime using the `--env-file` flag, and instruct Docker to override its default command to run *only* a subset of your pipeline using a `bash -c` subshell string:
+2.  Once the manual smoke test passes, you can incrementally add more scripts until you test the full pipeline. Stream your host machine data source file into the container, pass the host `.env` profile dynamically at runtime using the `--env-file` flag, and instruct Docker to override its default command to run *only* a subset of your pipeline using a `bash -c` subshell string:
    ```bash
    cat data/youtube_ids.txt | docker run -i --env-file .env <your_dockerhub_username>/ds5111-pipeline:latest bash -c "python bin/clean_ids.py | python bin/extract_transcripts_oop.py"
    ```
