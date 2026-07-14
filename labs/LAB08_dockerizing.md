@@ -1,6 +1,6 @@
 # LAB08: Containerizing the Data Ingestion Pipeline
 
-## 1. Introduction & Architectural Intent
+## Introduction & Architectural Intent
 
 Up to this point, your data engineering pipeline has relied completely on the host environment of your assigned AWS EC2 instance. You have manually managed Python runtimes, virtual environments (`env/`), and local system dependencies. In an enterprise data platform, running production workflows directly on a single developer's host machine creates a fragile infrastructure bottleneck. If the underlying operating system updates, or a library version drifts, the entire pipeline can break.
 
@@ -13,7 +13,7 @@ In this lab, you will transition your project into a modern, cloud-native micros
 
 ---
 
-## 2. Part 1: Docker Installation and Non-Root Permission Setup
+## Part 1: Docker Installation and Non-Root Permission Setup
 
 First, connect to your AWS EC2 instance via VS Code or your terminal. We must install the Docker engine and reconfigure its security boundaries so your default `ubuntu` system user can manage containers without needing to prefix every command with `sudo`.
 
@@ -46,7 +46,7 @@ First, connect to your AWS EC2 instance via VS Code or your terminal. We must in
 
 ---
 
-## 3. Part 2: Container Registry Registration
+## Part 2: Container Registry Registration
 
 To distribute container images across cloud data spaces, teams utilize a centralized registry. For this lab, we will utilize **Docker Hub** as our platform-agnostic distribution tier.
 
@@ -56,7 +56,7 @@ To distribute container images across cloud data spaces, teams utilize a central
 
 ---
 
-## 4. Part 3: Architecting the Image Blueprint (Dockerfile)
+## Part 3: Architecting the Image Blueprint (Dockerfile)
 
 A `Dockerfile` is a declarative manifest that tells the engine exactly how to assemble an environment layer-by-layer. 
 
@@ -100,7 +100,7 @@ Docker images are sent over the public internet to registries. If you include a 
 
 ---
 
-## 5. Part 4: Compiling and Building the Image
+## Part 4: Compiling and Building the Image
 
 **NB:** For this and the next section, you may find it useful to create makefile jobs so you don't have to keep rerunning the full commands.
 
@@ -119,7 +119,7 @@ With the manifest locked down, compile your codebase into a distinct, locally tr
 
 ---
 
-## 6. Part 5: Short-Circuit Testing (The `bash -c` Pipeline Trick)
+## Part 5: Short-Circuit Testing (The `bash -c` Pipeline Trick)
 
 Before running our full system or interacting with external cloud endpoints, we want to prove that our streaming logic functions correctly inside the isolated container space. We will leverage **Option A** (Linear Command-Line Pipes) coupled with a shell execution short-circuit to test our data enrichment up to, but excluding, the final Snowflake upload step.
 
@@ -142,7 +142,7 @@ Verify that clean, enriched `jsonl` strings stream directly out of the container
 
 ---
 
-## 7. Part 6: Full Live Pipeline Ingestion
+## Part 6: Full Live Pipeline Ingestion
 
 Now that your short-circuit logic is verified, execute your complete end-to-end streaming data pipeline. This run will process data within the container and land it directly into your remote cloud data warehouse tables:
 
@@ -154,7 +154,7 @@ Review your terminal log buffers and inspect your remote Snowflake worksheet spa
 
 ---
 
-## 8. Part 7: Shipping to the Centralized Registry
+## Part 7: Shipping to the Centralized Registry
 
 With your container image fully validated, authenticate your remote terminal session and push your compiled asset to the public cloud:
 
@@ -171,7 +171,7 @@ With your container image fully validated, authenticate your remote terminal ses
 
 ---
 
-## 9. Part 8: The Local Clean-Room Simulation
+## Part 8: The Local Clean-Room Simulation
 
 To simulate a remote production environment deployment without the added billing costs or quotas of spinning up a separate AWS virtual machine, we will perform a total local environmental wipe on your existing instance to force a fresh cloud container pull.
 
@@ -200,7 +200,7 @@ If your logs turn clean and your records hit Snowflake, you have built a fully t
 
 ---
 
-## 10. Grading Criteria & Evaluation Rubric (10 Points Total)
+## Grading Criteria & Evaluation Rubric (10 Points Total)
 
 | Target Weight | Evaluation Criteria Milestone | Measurement Objective |
 | --- | --- | --- |
